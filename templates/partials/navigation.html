@@ -1,0 +1,35 @@
+<header id="header" class="container-fluid header transition">
+	<div id="caption" class="container">
+		{% if PROFILE_PICTURE %}
+		<img id="profile_pic" src="{{ SITEURL }}/{{PROFILE_PICTURE}}" class="shadow rounded-circle float-sm-left img-thumbnail profile_pic t_all" alt=""/>
+		{% else %}
+		<img id="profile_pic" src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/imgs/profile.jpg" class="shadow rounded-circle float-sm-left img-thumbnail profile_pic t_all" alt=""/>
+		{% endif %}
+		<h1 class="t_all">{{ SITENAME }}</h1>
+	</div>
+	<nav class="navbar navbar-expand navbar-dark menu transition">
+	  <a class="navbar-brand" href="">&#187;</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+	    <div class="navbar-nav">
+	      <a class="nav-item nav-link {% if menu_actived == '/'%}active{% endif %}" href="{{ SITEURL }}/">Home</a>
+	      
+	      {% if DISPLAY_PAGES_ON_MENU %}
+	      	{% for p in pages %}
+	      		<a class="nav-item nav-link {% if menu_actived == p.title%}active{% endif %}" href="{{ SITEURL }}/{{ p.url }}" >{{ p.title }}</a>
+	      	{% endfor %}
+	      {% endif %}
+	    </div>
+	  </div>
+	</nav>
+	<div class="ribbon"></div>
+	{% if selected_cover %}
+	<div class="blog-cover" style="background-image: url('{{ selected_cover }}')"></div> 
+	{% elif selected_color %}
+    <div class="blog-cover cover" style="background-color: {{ selected_color }}"></div> 
+    {% else %}
+    <div class="blog-cover" style="background-image: url('{{ SITEURL }}/{{ THEME_STATIC_DIR }}/imgs/banner.jpg')"></div> 
+    {% endif %}
+</header>

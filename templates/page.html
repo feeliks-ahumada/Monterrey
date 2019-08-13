@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }}{% endblock title %}
+
+{# <!-- Choosing cover image --> #}
+{% if page.cover %}
+  {% if page.cover|lower|truncate(4, True, '') == "http" %}
+    {% set selected_cover = page.cover %}
+  {% else %}
+    {% set selected_cover = SITEURL+"/"+page.cover %}
+  {% endif %}
+{% elif page.og_image %}
+  {% if page.og_image|lower|truncate(4, True, '') == "http" %}
+    {% set selected_cover = page.og_image %}
+  {% else %}
+    {% set selected_cover = SITEURL+"/"+page.og_image %}
+  {% endif %}
+{% elif HEADER_COVER %}
+  {% if HEADER_COVER|lower|truncate(4, True, '') == "http" %}
+    {% set selected_cover = HEADER_COVER %}
+  {% else %}
+    {% set selected_cover = SITEURL+"/"+HEADER_COVER %}
+  {% endif %}
+{% elif page.color %}
+  {% set selected_color = page.color %}
+{% elif HEADER_COLOR %}
+  {% set selected_color = HEADER_COLOR %}
+{% endif %}
+
+{% set menu_actived = page.title %}
+{% block header %}
+  {% include 'partials/navigation.html' %}
+{% endblock header %}
+
+{% block content %}
+  {{ page.content }}
+{% endblock content %}

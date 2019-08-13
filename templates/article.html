@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% if article.cover %}
+  {% if article.cover|lower|truncate(4, True, '') == "http" %}
+    {% set selected_cover = article.cover %}
+  {% else %}
+    {% set selected_cover = SITEURL+"/"+article.cover %}
+  {% endif %}
+{% elif article.og_image %}
+  {% if article.og_image|lower|truncate(4, True, '') == "http" %}
+    {% set selected_cover = article.og_image %}
+  {% else %}
+    {% set selected_cover = SITEURL+"/"+article.og_image %}
+  {% endif %}
+{% elif article.color %}
+  {% set selected_color = article.color %}
+{% elif HEADER_COVER %}
+  {% if HEADER_COVER|lower|truncate(4, True, '') == "http" %}
+    {% set selected_cover = HEADER_COVER %}
+  {% else %}
+    {% set selected_cover = SITEURL+"/"+HEADER_COVER %}
+  {% endif %}
+{% elif HEADER_COLOR %}
+  {% set selected_color = HEADER_COLOR %}
+{% endif %}
+
+{% block head %}
+	{% for keyword in article.keywords %}
+	<meta name="keywords" content="{{keyword}}" >
+	{% endfor %}
+
+	{% if description %}
+	<meta name="description" content="{{ description }}">
+	{% elif article.headline %}
+	<meta name="description" content="{{ article.headline }}">
+	{% elif article.summary %}
+	<meta name="description" content="{{ article.summary|striptags|truncate(140) }}">
+	{% endif %}
+
+	{% for author in article.authors %}
+	<meta name="author" content="{{ author }}">
+	{% endfor %}
+
+	{% for tag in article.tags %}
+	<meta name="tags" content="{{tag}}">
+	{% endfor %}
+	<link href="{{ SITEURL }}/{{ article.url }}" rel="canonical" />
+{{ super() }}
+{% endblock %}
+
+{% block header %}
+  {% include 'partials/navigation.html' %}
+{% endblock header %}
+
+{% block content %}
+	<h1>{{ article.title }}</h1>
+	<div>
+		{{ article.content }}
+	</div>
+	{% include 'partials/social.html' %}
+{% endblock content %}
+
+{% block scripting %}
+	$("#show-disqus").click(function(){
+		$(".post-comments").addClass("activated");
+
+		{% if DISQUS_SITENAME %}
+			(function() { // DON'T EDIT BELOW THIS LINE
+			var d = document, s = d.createElement('script');
+			s.src = 'https://{{ DISQUS_SITENAME }}.disqus.com/embed.js';
+			s.setAttribute('data-timestamp', +new Date());
+			(d.head || d.body).appendChild(s);
+			})();
+		{% endif %}
+	});
+{% endblock scripting %}

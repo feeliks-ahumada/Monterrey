@@ -1,0 +1,72 @@
+{% macro author(authors)  %}
+	{% for author in authors %}
+		{% set author_name = author.name %}
+		{% if AUTHORS_BIO and author.name.lower() in AUTHORS_BIO %}
+			{% set author_name = AUTHORS_BIO[author.name.lower()].name or author.name %}
+		{% endif %}
+		<a class="author" href="{{ SITEURL }}/{{ author.url }}" id="{{ loop.index0 }}">{{ author_name }}</a>
+	{% endfor %}
+{%- endmacro %}
+
+
+{% macro card(article) %}
+	  <div class="card">
+	  	<a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Permalink to {{ article.title|striptags }}">
+	  		<span>
+	  	{% if article.preview_img  %}
+	    	<img src="{{ SITEURL }}/{{ article.preview_img }}" class="card-img-top" alt="{{ article.title }}">
+	    {% else %}
+	    	<img src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/imgs/not-found.png" class="card-img-top" alt="Image not found">
+	    {% endif %}
+	    	</span>
+		</a>
+	    <div class="card-body">
+			<h4 class="card-title mty"><a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Permalink to {{ article.title|striptags }}">{{ article.title }}</a></h4>
+		{% if SHOW_FULL_ARTICLE %}
+	        <section class="post-content">
+	        {{ article.content }}
+	        </section>
+	    {% else %}
+	        <section class="post-excerpt">
+	            <p class="card-text">
+	            {% if article.has_summary %}
+	                {{ article.summary }}
+	            {% elif article.summary %}
+	                {{ article.summary|striptags|truncate(250) }}
+	            {% endif %}
+	            </p>
+	        </section>
+	    {% endif %}
+	    </div>
+	    <div class="card-footer">
+	    	<small class="post-meta mty">
+			{{ author(article.authors) }}
+			| <time datetime="{{ article.date }}">{{ article.locale_date }}</time>
+			</small>
+			{% if article.read %}
+	    	<small class="text-muted">&middot; {{ article.read }} read</small>
+	    	{% endif %}
+	    </div>
+	  </div>
+{%- endmacro %}
+
+{% set empty_card %}
+	<div class="card" style="visibility: hidden;">
+	<img src="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/imgs/not-found.png" class="card-img-top" alt="Image not found">
+	<div class="card-body">Empty card</div>
+	</div>
+{% endset %}
+
+{% for article in articles|batch(3, '') %}
+<div class="row my-3">
+	<div class="card-deck">
+		{% for post in article %}
+			{% if post != '' %}
+				{{ card(post) }}
+			{% else %}
+				{{ empty_card }}
+			{% endif %}
+		{% endfor %}
+	</div>
+</div>
+{% endfor %}
